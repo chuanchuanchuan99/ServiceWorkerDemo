@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>离线优化test</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="keywords" content=""/>
+<meta name="description" content=""/>
+<meta name="viewport" content="1020"/>
+
+</head>
+<body>
+<!-- 内容区域 start -->
+<ul>
+    <li>浏览器是否支持：<span id="isSupport"></span></li>
+    <li>service worker是否注册成功：<span id="isSuccess"></span></li>
+    <li>当前注册状态：<span id="state"></span></li>
+    <li>当前service worker状态：<span id="swState"></span></li>
+</ul>
+<!-- 内容区域 end -->
+<script src="//news.sina.com.cn/268/2015/0112/jquery.newest.js" charset="utf-8"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        $('#isSupport').text('支持');
+
+        // 开始注册service workers
+        navigator.serviceWorker.register('demo-cache.js', {
+            scope: ''
+        }).then(function (registration) {
+            $('#isSuccess').text('注册成功');
+
+            var serviceWorker;
+            if (registration.installing) {
+                serviceWorker = registration.installing;
+                $('#state').text('installing');
+            } else if (registration.waiting) {
+                serviceWorker = registration.waiting;
+                $('#state').text('waiting');
+            } else if (registration.active) {
+                serviceWorker = registration.active;
+                $('#state').text('active');
+            }
+            if (serviceWorker) {
+                $('#swState').text(serviceWorker.state);
+                serviceWorker.addEventListener('statechange', function (e) {
+                    $('#swState').append('&emsp;状态变化为' + e.target.state);
+                });
+            }
+        }).catch (function (error) {
+            $('#isSuccess').text('注册没有成功');
+        });
+    } else {
+        $('#isSupport').text('不支持');
+    }
+</script>
+</body>
+</html>
